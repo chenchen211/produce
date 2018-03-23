@@ -22,7 +22,7 @@ import retrofit2.http.Url;
 public interface HttpService {
 
     @GET
-    Call<ResponseBody> doGET(@Url String url);
+    Call<ResponseBody> doGet(@Url String url);
 
     @FormUrlEncoded
     @POST

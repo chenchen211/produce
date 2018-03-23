@@ -18,7 +18,7 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.android.support:appcompat-v7:26.1.0'
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     implementation 'com.squareup.retrofit2:retrofit:2.0.2'
@@ -28,4 +28,9 @@ dependencies {
     implementation 'com.squareup.okhttp3:okhttp-urlconnection:3.2.0'
     implementation 'com.android.support:recyclerview-v7:26.1.0'
     implementation 'com.android.support:design:26.1.0'
+    implementation project(':collections')
+    implementation 'com.yanzhenjie:album:2.0.2'//图片选择框架
+    implementation 'com.youth.banner:banner:1.4.8'
+    implementation 'com.squareup.picasso:picasso:2.5.2'
+    implementation 'com.zhy:base-rvadapter:3.0.3'
 }

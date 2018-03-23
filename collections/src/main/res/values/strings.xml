@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">lib-collections</string>
+    <string name="pack_up">收起</string>
 </resources>

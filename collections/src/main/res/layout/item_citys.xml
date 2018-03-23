@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:background="@color/white"
+    android:gravity="center"
+    android:descendantFocusability="blocksDescendants"
+    android:text="河南"
+    android:textColor="@color/text_black"
+    android:textSize="14sp"
+    android:layout_height="30dp">
+</TextView>
