@@ -26,7 +26,6 @@ public class HttpHelper {
         CookieManager cookieManager = new CookieManager(new InDiskCookieStore(context), CookiePolicy.ACCEPT_ALL);
 
         JavaNetCookieJar cookieJar = new JavaNetCookieJar(cookieManager);
-
         OkHttpClient client = new OkHttpClient.Builder()
                 .cookieJar(cookieJar)
                 .addInterceptor(interceptor)

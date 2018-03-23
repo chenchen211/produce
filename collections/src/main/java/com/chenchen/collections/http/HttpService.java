@@ -12,6 +12,7 @@ import retrofit2.http.GET;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
+import retrofit2.http.Path;
 import retrofit2.http.Url;
 
 /**
@@ -35,8 +36,11 @@ public interface HttpService {
      */
     @Multipart
     @POST
-    Call<ResponseBody> upload(@Url String url,@Part List<MultipartBody.Part> partList);
+    Call<ResponseBody> uploadWithRoot(@Url String url,@Part List<MultipartBody.Part> partList);
 
+    @Multipart
+    @POST("{path}")
+    Call<ResponseBody> upload(@Path("path") String path, @Part List<MultipartBody.Part> parts);
     /**
      * 图片验证码
      * @param url 验证码地址
