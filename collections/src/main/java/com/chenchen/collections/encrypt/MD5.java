@@ -1,4 +1,4 @@
-package com.chenchen.collections.utils;
+package com.chenchen.collections.encrypt;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -7,7 +7,7 @@ import java.security.NoSuchAlgorithmException;
  * MD5加密
  */
 
-public class MD5Util {
+public class MD5 {
     // 进行md5的加密运算
     public static String encode(String password) {
         // MessageDigest专门用于加密的类
