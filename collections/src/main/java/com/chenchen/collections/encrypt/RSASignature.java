@@ -130,7 +130,7 @@ public class RSASignature {
      * @param content 代签名字符串
      * @return 签名结果
      */
-    public static String sign(String content){
+    private static String sign(String content){
         PrivateKey priKey;
         java.security.Signature signature;
         try {
@@ -161,12 +161,13 @@ public class RSASignature {
     /**
      * 验签方法
      */
-    public static boolean vertify(Map<String,String> map, String sign){
+    public static boolean vertify(Map<String,String> map){
+        String sign = map.remove("sign");
         String content = getSignContent(map);
         return vertify(content,sign);
     }
 
-    public static boolean vertify(String content,String sign){
+    private static boolean vertify(String content,String sign){
         try {
             java.security.Signature signature;
             PublicKey pubKey = getPublicKeyFromX509("RSA", new ByteArrayInputStream(publicKey.getBytes()));

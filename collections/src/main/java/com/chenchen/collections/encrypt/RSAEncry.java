@@ -18,6 +18,7 @@ import java.util.List;
 import javax.crypto.Cipher;
 
 public class RSAEncry {
+
     public static final String RSA = "RSA";// 非对称加密密钥算法
     public static final String ECB_PKCS1_PADDING = "RSA/ECB/PKCS1Padding";//加密填充方式
     public static final int DEFAULT_KEY_SIZE = 2048;//秘钥默认长度
