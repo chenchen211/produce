@@ -1,4 +1,4 @@
-package com.chenchen.collections.util;
+package com.chenchen.collections.utils;
 
 import com.chenchen.collections.juhe.JuheUtil;
 import com.chenchen.collections.juhe.entity.IDCard;

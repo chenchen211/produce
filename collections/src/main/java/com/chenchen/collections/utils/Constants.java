@@ -1,4 +1,4 @@
-package com.chenchen.collections.util;
+package com.chenchen.collections.utils;
 
 /**
  * Created by Administrator on 2018/3/9.

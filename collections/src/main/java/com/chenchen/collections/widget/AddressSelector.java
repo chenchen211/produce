@@ -12,8 +12,8 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.chenchen.collections.R;
-import com.chenchen.collections.util.Constants;
-import com.chenchen.collections.util.Data4Address;
+import com.chenchen.collections.utils.Constants;
+import com.chenchen.collections.utils.Data4Address;
 
 import java.util.HashMap;
 import java.util.List;
@@ -55,7 +55,7 @@ public class AddressSelector extends PopupWindow implements View.OnClickListener
     }
 
     public AddressSelector(@NonNull Context context,OnFinishedListener listener){
-        this(context,LayoutInflater.from(context).inflate(R.layout.activity_address_choose, null),listener);
+        this(context,LayoutInflater.from(context).inflate(R.layout.address_choose, null),listener);
     }
     private void init(){
         province = null;

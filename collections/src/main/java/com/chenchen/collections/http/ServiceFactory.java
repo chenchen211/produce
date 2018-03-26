@@ -4,13 +4,12 @@ import android.content.Context;
 import android.support.annotation.IdRes;
 
 import com.chenchen.collections.http.converter.Base64ConverterFactory;
-import com.chenchen.collections.util.SSLFactory;
+import com.chenchen.collections.utils.SSLFactory;
 
 import java.net.CookieManager;
 import java.net.CookiePolicy;
 import java.util.concurrent.TimeUnit;
 
-import javax.net.ssl.SSLException;
 import javax.net.ssl.SSLSocketFactory;
 
 import okhttp3.JavaNetCookieJar;

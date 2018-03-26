@@ -1,4 +1,4 @@
-package com.chenchen.collections.util;
+package com.chenchen.collections.utils;
 
 import android.content.Context;
 

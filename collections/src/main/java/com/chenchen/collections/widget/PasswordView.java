@@ -1,10 +1,12 @@
 package com.chenchen.collections.widget;
 
-import android.widget.PopupWindow;
+import android.content.Context;
+import android.util.AttributeSet;
+import android.widget.EditText;
 
-/**
- * Created by Administrator on 2018/3/9.
- */
+public class PasswordView extends EditText {
 
-public class PasswordView extends PopupWindow {
+    public PasswordView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+    }
 }
