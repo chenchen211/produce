@@ -2,25 +2,10 @@
 <android.support.design.widget.CoordinatorLayout
     android:theme="@style/Theme.AppCompat.Light.NoActionBar"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     android:padding="8dp"
     tools:context=".MainActivity">
-
-    <com.chenchen.collections.widget.PasswordInputView
-        android:id="@+id/again_paypswd_pet"
-        android:layout_width="match_parent"
-        android:layout_height="65dp"
-        android:cursorVisible="false"
-        android:inputType="number"
-        android:maxLength="6"
-        app:pivBorderColor="@color/gary"
-        app:pivBorderRadius="6dp"
-        app:pivBorderWidth="1dp"
-        app:pivPasswordColor="@color/text_blue"
-        app:pivPasswordLength="6"
-        app:pivPasswordWidth="9dp"  />
 </android.support.design.widget.CoordinatorLayout>

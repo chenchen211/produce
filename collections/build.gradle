@@ -1,13 +1,15 @@
 apply plugin: 'com.android.library'
+apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: 'com.jfrog.bintray'
 
 android {
-    compileSdkVersion 26
+    compileSdkVersion rootProject.ext.compileSdkVersion
 
     defaultConfig {
-        minSdkVersion 15
-        targetSdkVersion 26
-        versionCode 1
-        versionName "1.0"
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        versionCode rootProject.ext.versionCode
+        versionName rootProject.ext.versionName
     }
 
     buildTypes {
@@ -22,10 +24,10 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.android.support:appcompat-v7:26.1.0'
-    implementation 'com.squareup.retrofit2:retrofit:2.0.2'
-    implementation 'com.squareup.retrofit2:converter-gson:2.0.2'
-    implementation 'com.squareup.retrofit2:adapter-rxjava:2.0.2'
-    implementation 'com.squareup.okhttp3:logging-interceptor:3.2.0'
-    implementation 'com.squareup.okhttp3:okhttp-urlconnection:3.2.0'
-    implementation 'com.android.support:recyclerview-v7:26.1.0'
+    api 'com.squareup.retrofit2:retrofit:2.0.2'
+    api 'com.squareup.retrofit2:converter-gson:2.0.2'
+    api 'com.squareup.retrofit2:adapter-rxjava:2.0.2'
+    api 'com.squareup.okhttp3:logging-interceptor:3.2.0'
+    api 'com.squareup.okhttp3:okhttp-urlconnection:3.2.0'
+    api 'com.android.support:recyclerview-v7:26.1.0'
 }
