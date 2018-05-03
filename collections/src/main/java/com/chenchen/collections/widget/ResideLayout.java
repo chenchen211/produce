@@ -28,7 +28,7 @@ import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.view.accessibility.AccessibilityEvent;
 
-import com.chenchen.cloudvedio.R;
+import com.chenchen.collections.R;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;

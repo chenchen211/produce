@@ -6,7 +6,9 @@
         <attr name="civ_border_overlay" format="boolean" />
         <attr name="civ_fill_color" format="color" />
     </declare-styleable>
-
+    <declare-styleable name="ResideLayout">
+        <attr name="overhangSize" format="dimension"/>
+    </declare-styleable>
     <declare-styleable name="PasswordInputView">
         <attr name="pivBorderColor" format="color"/>
         <attr name="pivBorderWidth" format="dimension"/>
