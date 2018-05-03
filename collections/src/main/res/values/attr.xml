@@ -17,15 +17,6 @@
         <attr name="pivPasswordLength" format="integer"/>
     </declare-styleable>
 
-    <declare-styleable name="PasswordView">
-        <attr name="pv_border_color" format="color"/>
-        <attr name="pv_border_width" format="dimension"/>
-        <attr name="pv_border_radius" format="dimension"/>
-        <attr name="pv_password_color" format="color"/>
-        <attr name="pv_password_size" format="dimension"/>
-        <attr name="pv_password_radius" format="dimension"/>
-        <attr name="pv_password_lenth" format="integer"/>
-    </declare-styleable>
     <declare-styleable name="XLoadingView">
         <attr name="loadingView" format="reference" />
         <attr name="errorView" format="reference" />
