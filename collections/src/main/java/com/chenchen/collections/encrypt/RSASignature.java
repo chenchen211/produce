@@ -25,7 +25,8 @@ import java.util.Set;
 import java.util.TreeMap;
 
 /**
- * Created by Administrator on 2017/7/24.
+ * RSA签名与验签，支持1024位(RSA)和2048位(RSA2)
+ * 私钥签名，公钥验签
  */
 
 public class RSASignature {
@@ -40,76 +41,101 @@ public class RSASignature {
 
     private static final int DEFAULT_BUFFER_SIZE = 8192;
 
-    private static String sign_type="RSA2";
+    private Map<String,String> filter = new HashMap<>();
 
-    private static String charset = "UTF-8";
+    private String sign_type="RSA2";
 
-    private static String publicKey=
+    private String charset = "UTF-8";
+
+    private String publicKey=
             "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAu18JuUrY6nY/i6LSZTXT" +
-            "+joOXg/lAJUIFRRPGd4L0OsNHu7KugVf7fvZ4fq15dDLyiud8pgdZA/fugfLN5NY" +
-            "bBt8yX4mfARksMkyEjZTQC0kBmhqNLNyNW6ze0SWWbmpS6NGBNFJ8wEaeXkaE72q" +
-            "eaJBOWIvDtyzXUq+YWCoODY26b53oNaxp0iLAwUIF5bI7kmEJ66nrUty9sJIoObf" +
-            "lC8uRmjGMJx1U9vSk7RxKr1AisIFxwC5ZunRgVGPiEPDDVQJ1sC+aZJGOebKo3Uh" +
-            "QF21JKAarYCXyc9rE39Bx+UggHbnm/668VwwRkWnnR4+N+wPi7zt2NHwgiu/23T1" +
-            "iwIDAQAB";
+                    "+joOXg/lAJUIFRRPGd4L0OsNHu7KugVf7fvZ4fq15dDLyiud8pgdZA/fugfLN5NY" +
+                    "bBt8yX4mfARksMkyEjZTQC0kBmhqNLNyNW6ze0SWWbmpS6NGBNFJ8wEaeXkaE72q" +
+                    "eaJBOWIvDtyzXUq+YWCoODY26b53oNaxp0iLAwUIF5bI7kmEJ66nrUty9sJIoObf" +
+                    "lC8uRmjGMJx1U9vSk7RxKr1AisIFxwC5ZunRgVGPiEPDDVQJ1sC+aZJGOebKo3Uh" +
+                    "QF21JKAarYCXyc9rE39Bx+UggHbnm/668VwwRkWnnR4+N+wPi7zt2NHwgiu/23T1" +
+                    "iwIDAQAB";
 
-    private static String privateKey=
+    private String privateKey=
             "MIIEogIBAAKCAQEAu18JuUrY6nY/i6LSZTXT+joOXg/lAJUIFRRPGd4L0OsNHu7K" +
-            "ugVf7fvZ4fq15dDLyiud8pgdZA/fugfLN5NYbBt8yX4mfARksMkyEjZTQC0kBmhq" +
-            "NLNyNW6ze0SWWbmpS6NGBNFJ8wEaeXkaE72qeaJBOWIvDtyzXUq+YWCoODY26b53" +
-            "oNaxp0iLAwUIF5bI7kmEJ66nrUty9sJIoObflC8uRmjGMJx1U9vSk7RxKr1AisIF" +
-            "xwC5ZunRgVGPiEPDDVQJ1sC+aZJGOebKo3UhQF21JKAarYCXyc9rE39Bx+UggHbn" +
-            "m/668VwwRkWnnR4+N+wPi7zt2NHwgiu/23T1iwIDAQABAoIBAFdhS+SYji5RdPMG" +
-            "vL2sa63fE0I0gWRTHBDQhs8WaUZFx7msPOihhwoyEHs9c0S4qcEftColXFeEu55C" +
-            "8jd5xJut+fTxmrrtRZPYUDyEDzD3nDxMx3LKWLGobZVH+CHh3pzCiO3IOIdV9WW+" +
-            "3zVjlzPgQjCjpDR3IkKYj85TyD9l4+G5eZZ/MMh0DxySWht2Lc8pGoZA/eF3FUFa" +
-            "pwdIUY3XH2B4O75qnE0uhhV1bhQkrdJh9FpjsJGOrWQW5Ms/m1WhWeb3tROBiog+" +
-            "S68kqrn3N0EoUUDTx9T2K+tLipncLutSPyQluAK+e7cM4mwM/6UXj0BpF5MEn2C5" +
-            "kesetOkCgYEA8QGxnHBzJ1JFb1YI82QATGMOKZi23yr/T95sSo/S84csHs/ew176" +
-            "DlLjzmzvM+dxtPNTXMy6fwAcZlOgDWmaGxU+R8j8u9IemvUmlQqzpksKepDTTdD8" +
-            "hAFMOx202ysXLGWUEXyAk6AA1Vhzm2gS62HXT1NlowMkOmAfvQ0KwWUCgYEAxwcj" +
-            "tCXnXJnw055uc43zkXs78VWakGS0bkaQidkqBzAtffs0JTj+NQzbJDUDlBOnVNHG" +
-            "ImMNFiF838a9Z0PB3d4YsY74jaRjRs6SwtK5X5AiKNeIdth4T8ihMzbrbcd1JssP" +
-            "YHoQrzml8wKWm0wgFzBh7P2lgB9tyAvxVgAwZC8CgYB8DNgj4smS8sjkns8qoE17" +
-            "A/11MbLnOdWCgcURt+foC6qNDYfm3gsttkKlrPKOr9GaRyigeox/9Emp7d9TKAj3" +
-            "ab7N6kkUT/oK3qaGTqTbsoJpRgRNaIWhWJ2pTAgcS5i49Gv7eC8iTVhAeC/BTRd3" +
-            "6ruNjCqjdml+Vp3fjEf99QKBgFZ4Epn88cS4mPnH1mLb5FtreAKE148uQXm7rKZH" +
-            "NExFMS6Pyfr2BPOVb0wOwExAMa3XKcbc092ulOtAFB/eP0cebAoQfIpFRmCH9Rkx" +
-            "phoPq9ektIQ1zieTmf1/Oc/LHWnKRRb8UW1flWq70CUOcM7CVXk6RgIhJXgJQEPF" +
-            "90A/AoGAZHjGaV4WhCbAKMi8Rrj8ZstPhe4VliaENYAWx8UJKxfnCm/BmOLwUZXu" +
-            "S3fTNsc1maHFFvN1ZezzwMvAg/QBtL5EzrURwUCXCkOpuEsvP7Zo6LINFKHtp346" +
-            "SzMoRVj7HNgoEchhek36/o/5YBV3WKo8HHQpDKZ3WCdiQHLBUnY=";
+                    "ugVf7fvZ4fq15dDLyiud8pgdZA/fugfLN5NYbBt8yX4mfARksMkyEjZTQC0kBmhq" +
+                    "NLNyNW6ze0SWWbmpS6NGBNFJ8wEaeXkaE72qeaJBOWIvDtyzXUq+YWCoODY26b53" +
+                    "oNaxp0iLAwUIF5bI7kmEJ66nrUty9sJIoObflC8uRmjGMJx1U9vSk7RxKr1AisIF" +
+                    "xwC5ZunRgVGPiEPDDVQJ1sC+aZJGOebKo3UhQF21JKAarYCXyc9rE39Bx+UggHbn" +
+                    "m/668VwwRkWnnR4+N+wPi7zt2NHwgiu/23T1iwIDAQABAoIBAFdhS+SYji5RdPMG" +
+                    "vL2sa63fE0I0gWRTHBDQhs8WaUZFx7msPOihhwoyEHs9c0S4qcEftColXFeEu55C" +
+                    "8jd5xJut+fTxmrrtRZPYUDyEDzD3nDxMx3LKWLGobZVH+CHh3pzCiO3IOIdV9WW+" +
+                    "3zVjlzPgQjCjpDR3IkKYj85TyD9l4+G5eZZ/MMh0DxySWht2Lc8pGoZA/eF3FUFa" +
+                    "pwdIUY3XH2B4O75qnE0uhhV1bhQkrdJh9FpjsJGOrWQW5Ms/m1WhWeb3tROBiog+" +
+                    "S68kqrn3N0EoUUDTx9T2K+tLipncLutSPyQluAK+e7cM4mwM/6UXj0BpF5MEn2C5" +
+                    "kesetOkCgYEA8QGxnHBzJ1JFb1YI82QATGMOKZi23yr/T95sSo/S84csHs/ew176" +
+                    "DlLjzmzvM+dxtPNTXMy6fwAcZlOgDWmaGxU+R8j8u9IemvUmlQqzpksKepDTTdD8" +
+                    "hAFMOx202ysXLGWUEXyAk6AA1Vhzm2gS62HXT1NlowMkOmAfvQ0KwWUCgYEAxwcj" +
+                    "tCXnXJnw055uc43zkXs78VWakGS0bkaQidkqBzAtffs0JTj+NQzbJDUDlBOnVNHG" +
+                    "ImMNFiF838a9Z0PB3d4YsY74jaRjRs6SwtK5X5AiKNeIdth4T8ihMzbrbcd1JssP" +
+                    "YHoQrzml8wKWm0wgFzBh7P2lgB9tyAvxVgAwZC8CgYB8DNgj4smS8sjkns8qoE17" +
+                    "A/11MbLnOdWCgcURt+foC6qNDYfm3gsttkKlrPKOr9GaRyigeox/9Emp7d9TKAj3" +
+                    "ab7N6kkUT/oK3qaGTqTbsoJpRgRNaIWhWJ2pTAgcS5i49Gv7eC8iTVhAeC/BTRd3" +
+                    "6ruNjCqjdml+Vp3fjEf99QKBgFZ4Epn88cS4mPnH1mLb5FtreAKE148uQXm7rKZH" +
+                    "NExFMS6Pyfr2BPOVb0wOwExAMa3XKcbc092ulOtAFB/eP0cebAoQfIpFRmCH9Rkx" +
+                    "phoPq9ektIQ1zieTmf1/Oc/LHWnKRRb8UW1flWq70CUOcM7CVXk6RgIhJXgJQEPF" +
+                    "90A/AoGAZHjGaV4WhCbAKMi8Rrj8ZstPhe4VliaENYAWx8UJKxfnCm/BmOLwUZXu" +
+                    "S3fTNsc1maHFFvN1ZezzwMvAg/QBtL5EzrURwUCXCkOpuEsvP7Zo6LINFKHtp346" +
+                    "SzMoRVj7HNgoEchhek36/o/5YBV3WKo8HHQpDKZ3WCdiQHLBUnY=";
 
-    public static String getSign_type() {
+    private static RSASignature instance;
+    private RSASignature() {
+    }
+    public static RSASignature getInstance() {
+        if (instance == null) {
+            instance = new RSASignature();
+        }
+        return instance;
+    }
+
+    public String getSign_type() {
         return sign_type;
     }
 
-    public static void setSign_type(String sign_type) {
-        RSASignature.sign_type = sign_type;
+    public RSASignature setSign_type(String sign_type) {
+        this.sign_type = sign_type;
+        return instance;
     }
 
-    public static String getCharset() {
+    public String getCharset() {
         return charset;
     }
 
-    public static void setCharset(String charset) {
-        RSASignature.charset = charset;
+    public RSASignature setCharset(String charset) {
+        this.charset = charset;
+        return instance;
     }
 
-    public static String getPublicKey() {
+    public String getPublicKey() {
         return publicKey;
     }
 
-    public static void setPublicKey(String publicKey) {
-        RSASignature.publicKey = publicKey;
+    public RSASignature setPublicKey(String publicKey) {
+        this.publicKey = publicKey;
+        return instance;
     }
 
-    public static String getPrivateKey() {
+    public String getPrivateKey() {
         return privateKey;
     }
 
-    public static void setPrivateKey(String privateKey) {
-        RSASignature.privateKey = privateKey;
+    public RSASignature setPrivateKey(String privateKey) {
+        this.privateKey = privateKey;
+        return instance;
+    }
+
+    public Map<String, String> getFilter() {
+        return filter;
+    }
+
+    public RSASignature setFilter(Map<String, String> filter) {
+        this.filter = filter;
+        return instance;
     }
 
     /**
@@ -117,9 +143,8 @@ public class RSASignature {
      *
      * @param map 包含签名参数
      * @return 签名结果
-     * @throws Exception
      */
-    public static String sign(Map<String,String> map){
+    public String sign(Map<String,String> map){
         String content = getSignContent(map);
         System.out.println("请求参数生成的字符串为:" + content);
         return sign(content);
@@ -130,7 +155,7 @@ public class RSASignature {
      * @param content 代签名字符串
      * @return 签名结果
      */
-    private static String sign(String content){
+    private String sign(String content){
         PrivateKey priKey;
         java.security.Signature signature;
         try {
@@ -158,16 +183,17 @@ public class RSASignature {
             return null;
         }
     }
+
     /**
      * 验签方法
      */
-    public static boolean vertify(Map<String,String> map){
+    public boolean vertify(Map<String,String> map){
         String sign = map.remove("sign");
         String content = getSignContent(map);
         return vertify(content,sign);
     }
 
-    private static boolean vertify(String content,String sign){
+    private boolean vertify(String content,String sign){
         try {
             java.security.Signature signature;
             PublicKey pubKey = getPublicKeyFromX509("RSA", new ByteArrayInputStream(publicKey.getBytes()));
@@ -191,7 +217,8 @@ public class RSASignature {
             return false;
         }
     }
-    private static PrivateKey getPrivateKeyFromPKCS8(String algorithm, InputStream ins){
+
+    private PrivateKey getPrivateKeyFromPKCS8(String algorithm, InputStream ins){
         if (ins == null || TextUtils.isEmpty(algorithm)) {
             return null;
         }
@@ -214,7 +241,7 @@ public class RSASignature {
         return null;
     }
 
-    private static PublicKey getPublicKeyFromX509(String algorithm, InputStream ins){
+    private PublicKey getPublicKeyFromX509(String algorithm, InputStream ins){
         try {
             KeyFactory keyFactory = KeyFactory.getInstance(algorithm,"BC");
 
@@ -244,24 +271,32 @@ public class RSASignature {
      * @param map 代签名的参数
      * @return 代签名字符串
      */
-    private static String getSignContent(Map<String, String> map) {
+    private String getSignContent(Map<String, String> map) {
         StringBuilder content = new StringBuilder();
         Map<String, String> sortMap = sortMapByKey(map);
 
         Set<Map.Entry<String, String>> entrySet = sortMap.entrySet();
         for (Map.Entry<String,String> entry : entrySet) {
-            if(!entry.getKey().equals("sign") && !entry.getKey().equals("sign_type") && !TextUtils.isEmpty(entry.getValue())){
-                content.append( entry.getKey());
-                content.append("=");
-                content.append(entry.getValue());
-                content.append("&");
+            if(filter.isEmpty()){
+                if(!entry.getKey().equals("sign") && !entry.getKey().equals("sign_type") && !TextUtils.isEmpty(entry.getValue())){
+                    content.append( entry.getKey());
+                    content.append("=");
+                    content.append(entry.getValue());
+                    content.append("&");
+                }
+            }else{
+                if(!filter.containsKey(entry.getKey()) && !TextUtils.isEmpty(entry.getValue())){
+                    content.append( entry.getKey());
+                    content.append("=");
+                    content.append(entry.getValue());
+                    content.append("&");
+                }
             }
         }
         content.deleteCharAt(content.length()-1);
         return content.toString();
     }
-
-    private static String readText(InputStream ins) throws IOException {
+    private String readText(InputStream ins) throws IOException {
         Reader reader = new InputStreamReader(ins);
         StringWriter writer = new StringWriter();
 
@@ -269,7 +304,7 @@ public class RSASignature {
         return writer.toString();
     }
 
-    private static void io(Reader in, Writer out, int bufferSize) throws IOException {
+    private void io(Reader in, Writer out, int bufferSize) throws IOException {
         if (bufferSize == -1) {
             bufferSize = DEFAULT_BUFFER_SIZE >> 1;
         }
@@ -286,7 +321,7 @@ public class RSASignature {
      * @param map 要排序的字符串
      * @return 返回类型为TreeMap
      */
-    private static Map<String, String> sortMapByKey(Map<String, String> map) {
+    private Map<String, String> sortMapByKey(Map<String, String> map) {
         if (map == null || map.isEmpty()) {
             return new HashMap<>();
         }

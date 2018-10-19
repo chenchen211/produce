@@ -4,7 +4,6 @@ import android.content.Context;
 import android.support.annotation.IdRes;
 
 import com.chenchen.collections.http.converter.Base64ConverterFactory;
-import com.chenchen.collections.utils.SSLFactory;
 
 import java.net.CookieManager;
 import java.net.CookiePolicy;
@@ -26,7 +25,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ServiceFactory {
     private static Retrofit retrofit;
-    private static OkHttpClient client;
 
     public ServiceFactory(){
         throw new IllegalStateException("ServiceFactory 不能创建对象");
@@ -47,7 +45,7 @@ public class ServiceFactory {
         }
         if(hosts != null && hosts.length>0)
             builder.hostnameVerifier(SSLFactory.getHostnameVerifier(hosts));
-        client = builder
+        OkHttpClient client = builder
                 .cookieJar(cookieJar)
                 .addInterceptor(interceptor)
                 .retryOnConnectionFailure(true)
@@ -63,23 +61,14 @@ public class ServiceFactory {
                 .baseUrl(baseUrl)
                 .build();
     }
-
-    private static HttpService getService(Context context,String baseUrl){
-        create(context,baseUrl,null,null);
-        return retrofit.create(HttpService.class);
-    }
-    private static HttpService getService(Context context,String baseUrl,int[] c,String[] h){
-        create(context,baseUrl,c,h);
-        return retrofit.create(HttpService.class);
-    }
     /**
      * 创建http网络请求Service
      * @param context 上下文
      * @param baseUrl baseurl
      * @return 网络请求Service
      */
-    public static HttpService createService(Context context,String baseUrl){
-        return getService(context,baseUrl);
+    public static <T> T createService(Class<T> serviceClass,Context context,String baseUrl){
+        return createService(serviceClass,context,baseUrl,null,null);
     }
 
     /**
@@ -90,7 +79,8 @@ public class ServiceFactory {
      * @param h host名，这里的名称不能带https://
      * @return 网络请求Service
      */
-    public static HttpService createService(Context context, String baseUrl, @IdRes int[] c, String[] h){
-        return getService(context,baseUrl,c,h);
+    public static <T> T createService(Class<T> serviceClass,Context context, String baseUrl, @IdRes int[] c, String[] h){
+        create(context,baseUrl,c,h);
+        return retrofit.create(serviceClass);
     }
 }

@@ -1,8 +1,6 @@
-package com.chenchen.collections.utils;
+package com.chenchen.collections.encrypt;
 
 import android.text.TextUtils;
-
-import com.chenchen.collections.encrypt.MD5;
 
 import java.util.Comparator;
 import java.util.HashMap;
@@ -50,7 +48,7 @@ public class SignUtil {
             throw new NullPointerException("key不能为空");
         }
         String signString = createSignString(para);
-        return MD5.encode(signString).toUpperCase();
+        return MD5.md5(signString).toUpperCase();
     }
     /**
      * 使用 Map按key进行排序

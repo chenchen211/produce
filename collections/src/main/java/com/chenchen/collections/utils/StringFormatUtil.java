@@ -8,29 +8,28 @@ import android.text.style.CharacterStyle;
 import android.text.style.ForegroundColorSpan;
 
 /**
- * Created by Administrator on 2016/5/29.
+ * 修改字符串中部分文字的颜色
  */
 public class StringFormatUtil {
     private SpannableStringBuilder spBuilder;
-    private String wholeStr, highlightStr;
-    private int color;
     private int start = 0, end = 0;
+    private static StringFormatUtil instance;
+
+
+    public static StringFormatUtil getInstance(){
+        if(instance == null){
+            instance = new StringFormatUtil();
+        }
+        return  instance;
+    }
 
     /**
      *
-     * @param context
      * @param wholeStr 全部文字
      * @param highlightStr 改变颜色的文字
-     * @param color 颜色
+     * @param color 要改变部分文字的颜色
      */
-    public StringFormatUtil(Context context, String wholeStr, String highlightStr, int color){
-        this.wholeStr=wholeStr;
-        this.highlightStr=highlightStr;
-        this.color=color;
-    }
-
-
-    public StringFormatUtil fillColor(){
+    public StringFormatUtil fillColor(String wholeStr, String highlightStr, int color){
         if(!TextUtils.isEmpty(wholeStr)&&!TextUtils.isEmpty(highlightStr)){
             if(wholeStr.contains(highlightStr)){
                 /*
@@ -52,9 +51,6 @@ public class StringFormatUtil {
     }
 
     public SpannableStringBuilder getResult(){
-        if (spBuilder != null) {
-            return spBuilder;
-        }
-        return null;
+        return spBuilder;
     }
 }

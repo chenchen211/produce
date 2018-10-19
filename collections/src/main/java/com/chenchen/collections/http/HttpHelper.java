@@ -15,9 +15,9 @@ import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class HttpHelper {
+public class HttpHelper{
     private static HttpHelper instance;
-    private HttpService service;
+    private final Retrofit retrofit;
 
     private HttpHelper(Context context, String baseUrl){
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
@@ -33,7 +33,7 @@ public class HttpHelper {
                 .connectTimeout(30, TimeUnit.SECONDS)
                 .addNetworkInterceptor(interceptor)
                 .build();
-        Retrofit retrofit = new Retrofit.Builder()
+        retrofit = new Retrofit.Builder()
                 .client(client)
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())//解析方法
@@ -41,7 +41,6 @@ public class HttpHelper {
                 //这里建议：- Base URL: 总是以/结尾；- @Url: 不要以/开头
                 .baseUrl(baseUrl)
                 .build();
-        service=retrofit.create(HttpService.class);
     }
 
     public static HttpHelper getInstance(Context context,String baseUrl){
@@ -51,7 +50,7 @@ public class HttpHelper {
         return instance;
     }
 
-    public HttpService getService() {
-        return service;
+    public <T> T getService(Class<T> serviceClass) {
+        return retrofit.create(serviceClass);
     }
 }

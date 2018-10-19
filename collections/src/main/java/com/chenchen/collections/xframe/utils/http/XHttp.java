@@ -2,6 +2,7 @@ package com.chenchen.collections.xframe.utils.http;
 
 
 import com.chenchen.collections.xframe.utils.handler.XHandler;
+import com.chenchen.collections.xframe.utils.log.XLog;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;

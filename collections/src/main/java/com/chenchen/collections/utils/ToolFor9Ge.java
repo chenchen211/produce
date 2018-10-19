@@ -26,9 +26,17 @@ import java.lang.ref.WeakReference;
 
 /**
  * 各种处理工具
+ * 1、图片压缩工具
  */
 
 public class ToolFor9Ge {
+    /**
+     * 压缩图片
+     * @param bm 要压缩的bitmap
+     * @param newWidth 新宽度
+     * @param newHeight 新高度
+     * @return 压缩后的bitmap
+     */
     public static Bitmap zoomImg(Bitmap bm, int newWidth, int newHeight)
     {
         int width = bm.getWidth();
@@ -44,16 +52,26 @@ public class ToolFor9Ge {
         return newbm;
     }
 
-    public static String getFileName(String pathandname)
+    /**
+     * 通过文件路径获取文件名
+     * @param path 文件路径
+     * @return 文件名
+     */
+    public static String getFileName(String path)
     {
-        int start = pathandname.lastIndexOf("/");
-        int end = pathandname.lastIndexOf(".");
+        int start = path.lastIndexOf("/");
+        int end = path.lastIndexOf(".");
         if ((start != -1) && (end != -1)) {
-            return pathandname.substring(start + 1, end);
+            return path.substring(start + 1, end);
         }
         return null;
     }
 
+    /**
+     * 读取文件转出Base64
+     * @param path 文件路径
+     * @return Base64密文
+     */
     public static String getBase64FromPath(String path)
     {
         String base64 = "";
@@ -71,6 +89,13 @@ public class ToolFor9Ge {
         return base64;
     }
 
+    /**
+     * 从文件加载图片
+     * @param path 图片路径
+     * @param w 宽
+     * @param h 高
+     * @return bitmap
+     */
     public static Bitmap getBitmapFromPath(String path, int w, int h) {
         BitmapFactory.Options opts = new BitmapFactory.Options();
 
@@ -93,6 +118,12 @@ public class ToolFor9Ge {
         return Bitmap.createScaledBitmap(weak.get(), w, h, true);
     }
 
+    /**
+     * 获取图片的Base64值
+     * @param bitmap bitmap图片
+     * @param bitmapQuality 图片质量
+     * @return base64值
+     */
     public static String getBase64FromBitmap(Bitmap bitmap, int bitmapQuality)
     {
         ByteArrayOutputStream bStream = new ByteArrayOutputStream();
@@ -101,6 +132,11 @@ public class ToolFor9Ge {
         return Base64.encodeToString(bytes, 0);
     }
 
+    /**
+     * 将base64转出bitmap
+     * @param string base64值
+     * @return bitmap
+     */
     public static Bitmap getBitmapFromBase64(String string)
     {
         byte[] bitmapArray = null;
@@ -112,6 +148,11 @@ public class ToolFor9Ge {
         return BitmapFactory.decodeByteArray(bitmapArray, 0, bitmapArray.length);
     }
 
+    /**
+     * 将数据流转出字符串
+     * @param is 输入流
+     * @return 转换结果
+     */
     public static String convertStreamToString(InputStream is) {
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
         StringBuilder sb = new StringBuilder();

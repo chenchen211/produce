@@ -6,7 +6,7 @@ import com.chenchen.collections.juhe.entity.JuheBase;
 import com.chenchen.collections.http.HttpResult;
 
 /**
- * Created by Administrator on 2018/3/9.
+ * 通过聚合数据接口验证身份证和IP信息
  */
 
 public class JuheUtil {

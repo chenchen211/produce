@@ -13,6 +13,7 @@ import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
 import retrofit2.http.Path;
+import retrofit2.http.Streaming;
 import retrofit2.http.Url;
 
 /**
@@ -48,4 +49,8 @@ public interface HttpService {
      */
     @GET()
     Call<ResponseBody> imgcode(@Url String url);
+
+    @Streaming//大文件需要添加，否则会OOM
+    @GET()
+    Call<ResponseBody> download(@Url String url);
 }

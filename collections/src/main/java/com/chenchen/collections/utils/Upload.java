@@ -1,14 +1,20 @@
 package com.chenchen.collections.utils;
 
+import android.content.Context;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
+import com.chenchen.collections.http.HttpHelper;
 import com.chenchen.collections.http.HttpResult;
 import com.chenchen.collections.http.HttpService;
+import com.chenchen.collections.http.ProgressRequestBody;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -28,21 +34,33 @@ public class Upload {
     private HttpService service;
     private String paramName;//后台接收图片流的参数名
     private String url;
-
-    private Upload(){}
-
-    public Upload(@NonNull String url,@NonNull String paramName){
-        this.url=url;
-        this.paramName=paramName;
-        checkEmpty();
+    private static Upload instance;
+    private ProgressRequestBody.OnUploadListener listener;
+    public static Upload getInstance(@NonNull Context context ,String url) {
+        if (instance == null) {
+            instance = new Upload(context,url);
+        }
+        return instance;
     }
-    private void checkEmpty(){
-        if(null==url || TextUtils.isEmpty(url)){
-            throw new IllegalArgumentException("上传地址不能为空");
+
+    private Upload(@NonNull Context context, @NonNull String uploadUrl){
+        try {
+            URI uri = new URI(uploadUrl);
+            this.url=uploadUrl;
+            service = HttpHelper.getInstance(context,"http://"+uri.getHost()+"/").getService(HttpService.class);
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
         }
-        if(null==paramName || TextUtils.isEmpty(paramName)){
-            throw new IllegalArgumentException("错误的图片流参数");
-        }
+    }
+
+    public Upload setParamName(String paramName) {
+        this.paramName = paramName;
+        return  this;
+    }
+
+    public Upload setListener(ProgressRequestBody.OnUploadListener listener) {
+        this.listener = listener;
+        return  this;
     }
 
     /**
@@ -73,8 +91,11 @@ public class Upload {
      * @param params 附加参数
      */
     public void uploadMultiple(@NonNull List<String> files,@Nullable Map<String,String> params,HttpResult<ResponseBody> response) throws Exception{
-        if(null == service){
-            throw new Exception("未设置service");
+        if(null==url || TextUtils.isEmpty(url)){
+            throw new IllegalArgumentException("上传地址不能为空");
+        }
+        if(null==paramName || TextUtils.isEmpty(paramName)){
+            throw new IllegalArgumentException("未设置图片上传参数，请使用setParamName设置");
         }
         if(files.isEmpty()){
             return;
@@ -83,11 +104,6 @@ public class Upload {
         new Builder(builder).addStrData(params).addFileData(files);
         List<MultipartBody.Part> parts = builder.build().parts();
         service.upload(url,parts).enqueue(response);
-    }
-
-    public Upload setService(HttpService service) {
-        this.service = service;
-        return this;
     }
 
     private class Builder{
@@ -101,7 +117,7 @@ public class Upload {
          * 添加参数
          * @param params 参数
          */
-        private Builder addStrData(Map<String,String> params){
+        Builder addStrData(Map<String,String> params){
             if(null == params) return this;
             Iterator<Map.Entry<String, String>> iterator = params.entrySet().iterator();
             while (iterator.hasNext()){
@@ -115,7 +131,7 @@ public class Upload {
          * 添加多张图片的数据流
          * @param files 文件路径集合
          */
-        private Builder addFileData(List<String> files) throws IOException{
+        Builder addFileData(List<String> files) throws IOException{
             if(files.isEmpty()) return this;
             for (String filePath : files) {
                 addFileData(filePath);
@@ -127,13 +143,63 @@ public class Upload {
          * 添加单张图片的数据流
          * @param filePath 单个文件路径
          */
-        private Builder addFileData(String filePath) throws IOException {
+        Builder addFileData(String filePath) throws IOException {
             File file = new File(filePath);
             if(!file.exists()){
-                throw new IOException("文件不存在");
+                throw new IOException("文件"+filePath+"不存在");
             }
             RequestBody imageBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
             builder.addFormDataPart(paramName, file.getName(),imageBody);
+            return this;
+        }
+    }
+    private class ProgressBuilder{
+
+        private MultipartBody.Builder builder;
+
+        public ProgressBuilder(MultipartBody.Builder builder){
+            this.builder = builder;
+        }
+        /**
+         * 添加参数
+         * @param params 参数
+         */
+        ProgressBuilder addStrData(Map<String,String> params){
+            if(null == params) return this;
+            Iterator<Map.Entry<String, String>> iterator = params.entrySet().iterator();
+            while (iterator.hasNext()){
+                Map.Entry<String, String> next = iterator.next();
+                builder.addFormDataPart(next.getKey(),next.getValue());
+            }
+            return this;
+        }
+
+        /**
+         * 添加多张图片的数据流
+         * @param files 文件路径集合
+         */
+        ProgressBuilder addFileData(List<String> files) throws IOException{
+            if(files.isEmpty()) return this;
+            for (String filePath : files) {
+                addFileData(filePath);
+            }
+            return this;
+        }
+
+        /**
+         * 添加单张图片的数据流
+         * @param filePath 单个文件路径
+         */
+        ProgressBuilder addFileData(String filePath) throws IOException {
+            File file = new File(filePath);
+            if(!file.exists()){
+                throw new IOException("文件"+filePath+"不存在");
+            }
+            if(listener == null){
+                throw new IllegalArgumentException("listener can not be null");
+            }
+            RequestBody imageBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+            builder.addFormDataPart(paramName, file.getName(),new ProgressRequestBody(imageBody,listener));
             return this;
         }
     }

@@ -8,7 +8,7 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
 /**
- * Created by Administrator on 2016/11/7.
+ * 各种字符串加密方法
  */
 
 public class StringEncrypt {

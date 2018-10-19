@@ -7,7 +7,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 /**
- * Created by Administrator on 2017/7/25.
+ * Retrofit响应基类
  */
 
 public abstract class HttpResult<T> implements Callback<T> {

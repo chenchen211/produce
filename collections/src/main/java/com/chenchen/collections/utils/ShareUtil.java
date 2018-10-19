@@ -1,7 +1,6 @@
 package com.chenchen.collections.utils;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import java.util.ArrayList;
@@ -12,11 +11,11 @@ import java.util.ArrayList;
 
 public class ShareUtil {
     /**
-     * 图文分析
+     * 图文分享
      * @param context 上下文
      * @param text 要分享的文字
      */
-    public void shareText(Activity context, String text){
+    public static void shareText(Activity context, String text){
         Intent shareIntent = new Intent();
         shareIntent.setAction(Intent.ACTION_SEND);
         shareIntent.putExtra(Intent.EXTRA_TEXT, text);
@@ -25,11 +24,11 @@ public class ShareUtil {
         context.startActivity(Intent.createChooser(shareIntent, "分享到"));
     }
     /**
-     * 图文分析
+     * 图文分享
      * @param context 上下文
      * @param uri 要分享的图片Uri
      */
-    public void shareImg(Activity context, Uri uri){
+    public static void shareImg(Activity context, Uri uri){
         Intent intent = new Intent();
         intent.setAction(Intent.ACTION_SEND);
         intent.setType("image/*");
@@ -39,11 +38,11 @@ public class ShareUtil {
         context.startActivity(Intent.createChooser(intent, "分享到"));
     }
     /**
-     * 图文分析
+     * 图文分享
      * @param context 上下文
      * @param uris 要分享的图片Uri
      */
-    public void shareImgs(Activity context, ArrayList<Uri> uris){
+    public static void shareImgs(Activity context, ArrayList<Uri> uris){
         Intent shareIntent = new Intent();
         shareIntent.setAction(Intent.ACTION_SEND_MULTIPLE);
         shareIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM,uris);
@@ -52,12 +51,12 @@ public class ShareUtil {
     }
 
     /**
-     * 图文分析
+     * 图文分享
      * @param context 上下文
      * @param text 要分享的文字
      * @param uri 要分享的图片Uri
      */
-    public void shareTextAndImg(Activity context, String text,Uri uri){
+    public static void shareTextAndImg(Activity context, String text,Uri uri){
         Intent shareIntent = new Intent();
         shareIntent.setAction(Intent.ACTION_SEND);
         shareIntent.putExtra(Intent.EXTRA_TEXT, text);
