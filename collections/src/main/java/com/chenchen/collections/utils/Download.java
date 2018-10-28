@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.chenchen.collections.http.HttpHelper;
 import com.chenchen.collections.http.HttpService;
@@ -65,9 +66,6 @@ public final class Download {
         if(TextUtils.isEmpty(uploadUrl)){
             throw new IllegalArgumentException("下载链接为空");
         }
-        if(file.exists()){
-            throw new IllegalArgumentException("文件已经存在");
-        }
         if(listener == null){
             throw new IllegalArgumentException("OnDownloadListener为空");
         }
@@ -75,12 +73,16 @@ public final class Download {
         service.download(uploadUrl).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, final Response<ResponseBody> response) {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        write2Disk(response,listener);
-                    }
-                }).start();
+                if(response.body() ==null){
+                    listener.onFailure("响应数据流为空");
+                }else{
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            write2Disk(response,listener);
+                        }
+                    }).start();
+                }
             }
 
             @Override
@@ -99,6 +101,7 @@ public final class Download {
         download(new File(path),listener);
     }
     private void write2Disk(Response<ResponseBody> response,OnDownloadListener listener) {
+
         long totalSize = response.body().contentLength();
         long current = 0;
         listener.onStart(totalSize);
@@ -109,16 +112,16 @@ public final class Download {
             is = response.body().byteStream();
             byte[] buffer = new byte[4096];
             int len = 0;
-            while ((len=is.read(buffer)) == -1){
+            while ((len=is.read(buffer)) != -1){
                 fos.write(buffer,0,len);
                 current += len;
                 listener.onProgress(current);
             }
             listener.onFinish(filePath);
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            listener.onFailure(e.getMessage());
         } catch (IOException e) {
-            e.printStackTrace();
+            listener.onFailure(e.getMessage());
         }finally {
             try {
                 if(fos != null){
@@ -128,7 +131,7 @@ public final class Download {
                     is.close();
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                listener.onFailure(e.getMessage());
             }
 
         }
