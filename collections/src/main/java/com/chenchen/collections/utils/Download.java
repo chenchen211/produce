@@ -27,22 +27,21 @@ import retrofit2.Response;
  * 用于文件下载
  */
 public final class Download {
-    private static Download instance;
     private HttpService service;
     private String localPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
     private String filePath;
     private String uploadUrl;
 
-    private Download(Context context,String url) {
+    private Download(Context context,String baseUrl) {
         if(context == null){
             throw new IllegalArgumentException("Context can not be null");
         }
-        if(TextUtils.isEmpty(url)){
+        if(TextUtils.isEmpty(baseUrl)){
             throw new IllegalArgumentException("url can not be null");
         }
         try {
-            URI uri = new URI(url);
-            uploadUrl=url;
+            URI uri = new URI(baseUrl);
+            uploadUrl=baseUrl;
             service = HttpHelper.getInstance(context,"http://"+uri.getHost()+"/").getService(HttpService.class);
         } catch (URISyntaxException e) {
             e.printStackTrace();
@@ -56,10 +55,7 @@ public final class Download {
      * @return Download对象
      */
     public static Download getInstance(Context context,String url) {
-        if (instance == null) {
-            instance = new Download(context,url);
-        }
-        return instance;
+        return new Download(context,url);
     }
 
     public void download(@NonNull File file,final OnDownloadListener listener){
@@ -74,7 +70,7 @@ public final class Download {
             @Override
             public void onResponse(Call<ResponseBody> call, final Response<ResponseBody> response) {
                 if(response.body() ==null){
-                    listener.onFailure("响应数据流为空");
+                    listener.onFailure("下载内容不存在");
                 }else{
                     new Thread(new Runnable() {
                         @Override
